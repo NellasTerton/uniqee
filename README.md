@@ -20,7 +20,8 @@ My role as **AI Systems Designer** was to architect a predictable, hallucination
 *   📄 `/prompts/01_The_Arbiter_System.md` — The core Game Master logic, routing, and state management.
 *   📄 `/prompts/02_Persona_Constraints.md` — AI character psychotypes and anti-bot typing dynamics.
 *   📄 `/data_schemas/persona_schema.json` — Example of how LLM output is structured for the backend.
-
+*   📄 `/data_schemas/scenario_schema.json` — Variable payload structure and plot drivers for dynamic scene generation.
+  
 ## ⚙️ Key Engineering Solutions
 
 ### 1. The Arbiter (State & Logic Management)
