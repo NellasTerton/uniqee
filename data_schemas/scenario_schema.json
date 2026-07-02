@@ -1,0 +1,19 @@
+{
+  "scenario_id": "scene_fake_compliment",
+  "ui_metadata": {
+    "title": "THE FAKE COMPLIMENT",
+    "category": "На одной волне (интересы, хобби)",
+    "cost_sparks": 10,
+    "show_in_onboarding": true
+  },
+  "llm_payload": {
+    "plot_context": "A dinner party at new acquaintances' place. The hostess prepared her 'signature' dish with effort. The evening unfolds...",
+    "atmosphere": "Clinking dishes, dim overhead light. Ordinary dinner party.",
+    "plot_drivers": {
+      "friction_sources": ["hostess offers a second helping", "host asks point-blank"],
+      "pleasant_surprise": ["wine is excellent", "bathroom break gives a real exit"]
+    },
+    "blacklist_words": ["poisoning", "hospitals", "culinary masterpiece", "true love"]
+  },
+  "target_metrics": ["tact", "straightforwardness", "social intelligence"]
+}
