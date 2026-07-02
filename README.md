@@ -1,4 +1,4 @@
-# UniQee: AI-Driven Narrative Engine & LLM Arbiter
+# Uniqee: AI-Driven Narrative Engine & LLM Arbiter
 
 **Status:** Released in Production  
 📱 [App Store](https://apps.apple.com/us/app/uniqee-meet-by-actions/id6744572287?l=ru) | 🤖 [Google Play](https://play.google.com/store/apps/details?id=app.aibrary.android.uniqee)
