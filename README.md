@@ -4,9 +4,9 @@
 📱 [App Store](https://apps.apple.com/us/app/uniqee-meet-by-actions/id6744572287?l=ru) | 🤖 [Google Play](https://play.google.com/store/apps/details?id=app.aibrary.android.uniqee)
 
 ## Overview
-This repository contains the high-level AI architecture, system prompts, and data structures for **UniQee** — a gamified application where an LLM acts as an autonomous "Game Master" (The Arbiter). 
+This repository contains the high-level AI architecture, system prompts, and data structures for **Uniqee** — a gamified application where an LLM acts as an autonomous "Game Master" (The Arbiter). 
 
-My role as **Lead AI Systems Designer** was to architect a predictable, hallucination-free LLM pipeline that processes simultaneous blind inputs from two users, calculates tension, and generates dynamic narrative scenarios in real-time.
+My role as **AI Systems Designer** was to architect a predictable, hallucination-free LLM pipeline that processes simultaneous blind inputs from two users, calculates tension, and generates dynamic narrative scenarios in real-time.
 
 ## 🛠 Tech Stack (Production 2026)
 *   **LLM Engines:** 2025–2026 Frontier Models via API. Heavy emphasis on Claude and Gemini (via AI Studio), alongside GPT. 
