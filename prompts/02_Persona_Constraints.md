@@ -18,10 +18,11 @@ Below is a redacted snippet of the Persona constraints and the global Action Gen
 
 <!-- [REDACTED FOR NDA: Remaining 30+ Psychotypes and Variable Weighting] -->
 
-2. Global Action Rules (Anti-Hallucination Guardrails)
+## 2. Global Action Rules (Anti-Hallucination Guardrails)
+
 This block is injected into the prompt to force the LLM to behave like a human user on a mobile device, effectively neutralizing the "AI voice".
-code
-Text
+
+```text
 *** ACTION GENERATION RULES (CRITICAL) ***
 
 1. NO RECAPS (CRITICAL): DO NOT summarize or repeat the current situation. React IMMEDIATELY to the problem.
@@ -37,3 +38,4 @@ Text
    
 FORMAT & LENGTH (STRICT LIMIT):
 Write ONE short, punchy phrase. MAXIMUM 1-2 short sentences. STRICTLY UNDER 15 WORDS.
+```

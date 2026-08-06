@@ -1,46 +1,101 @@
-# Uniqee: AI-Driven Narrative Engine & LLM Arbiter
+# Uniqee: AI-движок нарратива и LLM-Арбитр
 
-**Status:** Released in Production  
+**🇷🇺 Русский** · [🇬🇧 English](README.en.md)
+
+**Статус:** в продакшене
 📱 [App Store](https://apps.apple.com/us/app/uniqee-meet-by-actions/id6744572287?l=ru) | 🤖 [Google Play](https://play.google.com/store/apps/details?id=app.aibrary.android.uniqee)
 
-## Overview
-This repository contains the high-level AI architecture, system prompts, and data structures for **Uniqee** — a gamified application where an LLM acts as an autonomous "Game Master" (The Arbiter). 
+## О проекте
 
-My role as **AI Systems Designer** was to architect a predictable, hallucination-free LLM pipeline that processes simultaneous blind inputs from two users, calculates tension, and generates dynamic narrative scenarios in real-time.
+Здесь собрана архитектура AI-слоя, системные промты и структуры данных **Uniqee** — геймифицированного dating-приложения, где LLM работает автономным гейм-мастером («Арбитром»).
 
-## 🛠 Tech Stack (Production 2026)
-*   **LLM Engines:** 2025–2026 Frontier Models via API. Heavy emphasis on Claude and Gemini (via AI Studio), alongside GPT. 
-*   **Media Generation:** Nano Banana Pro & GPT-driven image generation pipelines + my own Comfy Workflows.
-*   **Prompt Architecture:** Strict XML-tagging, Multi-Agent workflow logic.
-*   **Data Handling:** Structured JSON Mapping, Dynamic Variable Injection.
+Два игрока читают одну и ту же сцену одновременно и отвечают вслепую, не видя ответа друг друга. Арбитр объединяет оба ответа, описывает последствие и продолжает историю — при этом он скрытно тестирует персональные критерии совместимости, о которых игроки не знают.
 
-## 📂 Repository Structure
-*(Note: Full source code is under NDA. This repo contains abstracted architecture logic and prompt frameworks).*
+Моя роль — **AI Systems Designer**: спроектировать предсказуемый пайплайн без галлюцинаций, который обрабатывает два слепых ввода одновременно, удерживает состояние истории и генерирует сцены в реальном времени.
 
-*   📄 `/prompts/01_The_Arbiter_System.md` — The core Game Master logic, routing, and state management.
-*   📄 `/prompts/02_Persona_Constraints.md` — AI character psychotypes and anti-bot typing dynamics.
-*   📄 `/data_schemas/persona_schema.json` — Example of how LLM output is structured for the backend.
-*   📄 `/data_schemas/scenario_schema.json` — Variable payload structure and plot drivers for dynamic scene generation.
-  
-## ⚙️ Key Engineering Solutions
+**Зона ответственности:** слой промтов и правил — поведение AI-персонажей, их ограничения, формат вывода, самопроверки модели перед ответом, сюжеты и переменные к ним. Бэкенд-инфраструктура (хостинг, БД) — зона инженерной команды.
 
-### 1. The Arbiter (State & Logic Management)
-Instead of relying on basic chat completion, the LLM is restricted by a strict XML-based `<disclosure_layer>` and `<protocol>`. It tracks tested variables (e.g., empathy, boundaries) and applies rotation constraints (Friction vs. Spontaneous events) to maintain narrative pacing without developer intervention.
+## 📂 Что в репозитории
 
-### 2. Hallucination Control & Guardrails
-To prevent the model from generating "cinematic" or illogical outputs, I implemented strict negative constraints:
-*   **Costly Kindness Rule:** Forces the AI to generate measurable, shared resource costs (time, money, physical space) instead of abstract social awkwardness.
-*   **Action Self-Check:** Forces the LLM to validate its own output against passive commentary before returning the string.
+*(Полный исходный код под NDA. Здесь — абстрагированная логика и фреймворки промтов.)*
 
-### 3. Human Typing Dynamics (Anti-Bot)
-To solve the "plastic AI" problem, persona prompts include strict formatting rules: absolute limits on emojis, lowercase enforcement for specific psychotypes, and bans on theatrical D&D-style stage directions (e.g., `*sighs and looks away*`).
+* 📄 [`/prompts/01_The_Arbiter_System.md`](prompts/01_The_Arbiter_System.md) — ядро гейм-мастера: роутинг, состояние, правила сцен.
+* 📄 [`/prompts/02_Persona_Constraints.md`](prompts/02_Persona_Constraints.md) — психотипы AI-персонажей и анти-бот правила набора текста.
+* 📄 [`/data_schemas/persona_schema.json`](data_schemas/persona_schema.json) — как вывод LLM структурируется для бэкенда.
+* 📄 [`/data_schemas/scenario_schema.json`](data_schemas/scenario_schema.json) — payload сюжета и драйверы сцен.
 
-## 🚀 V2 Architecture: Interdependent Variable Engine
-Currently upgrading the procedural generation pipeline to include dynamically linked contextual variables. 
+Файлы промтов оставлены на английском — это язык продакшен-артефактов.
 
-Instead of static scene generation, the system now cross-references interdependent variables before prompting the Arbiter (e.g., `Location: Business District` + `Time: Morning` logically triggers `Event: Commuters in suits`, not a random occurrence).
+## ⚙️ Ключевые инженерные решения
 
-**Business Value:** 
-*   Eliminates repetitive plot patterns and AI hallucinations.
-*   Ensures the exact same psychological criteria are tested across vastly different, realistic settings.
-*   Drastically increases replayability and user engagement, allowing players to replay the game with different personas in completely unique, logically coherent environments.
+### 1. Арбитр: управление состоянием
+
+Вместо обычного chat completion модель заперта в строгой XML-структуре `<disclosure_layer>` и `<protocol>`. Она получает именованные блоки (`expected_criteria`, `current_state`, `history`, `current_turn`) и обязана читать их по порядку.
+
+* **Один критерий на сцену.** Модель тестирует строго один скрытый критерий за сцену, никогда не раскрывая его игрокам.
+* **Пинг-понг.** Критерии чередуются между игроком A и игроком B каждую сцену.
+* **Фаза 2 (recheck).** Когда оба списка критериев исчерпаны, история не заканчивается: модель сверяется с `criteria_history` и берёт тот же критерий под **новым углом**, которого ещё не было. Пример для «отношение к детям»: свои дети → чужие дети в публичном месте → дети друзей и ответственность → дети как помеха в ресторане.
+
+### 2. Ротация типов сцен
+
+Каждая сцена — один из пяти типов: `FRICTION`, `SPONTANEOUS_FORK`, `PLEASANT_SURPRISE`, `INTERNAL_BEAT`, `AESTHETIC_MOMENT`. Модель читает `recent_scene_types` и обязана ротировать:
+
+* на любых 5 подряд идущих сценах — минимум один FORK и один SURPRISE;
+* никогда больше двух FRICTION подряд;
+* целевое распределение 25/25/25/15/10;
+* первая сцена истории не может быть FRICTION.
+
+Это решает главную проблему таких систем: без квот LLM скатывается в бесконечную череду проблем и наказаний.
+
+### 3. Тулбокс из 10 механик открытия сцены
+
+Однообразные завязки — вторая причина, по которой AI-истории читаются как шаблон. Каждая сцена открывается одной из 10 механик (`NPC_NONVERBAL`, `INFO_INJECT`, `ENVIRONMENT_SHIFT`, `SOCIAL_DYNAMICS`, `PHYSICAL_ACCIDENT`, `RESOURCE_STATUS`, `TIME_ANCHOR`, `SPATIAL_SHIFT`, `DETAIL_ZOOM`, `DIRECT_INTRUSION`), механика не должна повторяться со сценой ранее и подбирается под выбранный тип сцены.
+
+### 4. Контроль галлюцинаций: жёсткие негативные ограничения
+
+* **Costly Kindness Rule.** Если сцена FRICTION предлагает помочь третьей стороне, цена для пары обязана быть **общей, конкретной и измеримой**: деньги, уже заказанная еда, бронь с дедлайном, физически занятое место, время до конкретного события. Забанены расплывчатые издержки («немного времени», «социальная неловкость») и обратимые. Плюс ротация типов издержек: «деньги» не чаще двух раз на пять сцен.
+* **Dilemma Strength Check.** Перед выводом модель обязана ответить себе: «что сцена расскажет об игроке, если он ответит A, а если B?» Если оба ответа дают одинаковую информацию — дилемма слабая, переписать.
+* **Action Self-Check.** Модель проверяет собственный вывод на пассивный комментарий и философствование до того, как вернуть строку.
+* **Shared Scene Symmetry.** Событие обязано затрагивать обоих одинаково. Индивидуальные триггеры («твой телефон», «твой босс») запрещены — они делают второго игрока зрителем.
+* **Anti-Romance.** Модели запрещено приписывать игрокам действия, эмоции и слова, которых не было в их ответах. Никакой навязанной близости и «искры между вами».
+* **No Cascading Punishment.** После сцены с трением следующий средовой бит обязан быть нейтральным или позитивным — если новую проблему не создали сами игроки. Мир не мстительный.
+* **Split Prevention.** Если игроки выбрали взаимоисключающие действия, сюжет замораживается и требует договориться, а не разветвляется.
+
+### 5. Человеческая динамика набора текста (анти-бот)
+
+Чтобы убрать «пластиковый AI», промты персонажей задают форматирование жёстко: лимиты на эмодзи, принудительный нижний регистр для отдельных психотипов, запрет на театральные ремарки в духе D&D (`*вздыхает и отводит взгляд*`), запрет на растянутые буквы («плиииз», «нееет»), лимит длины ответа.
+
+**40 психотипов** (20 женских, 20 мужских), каждый со своей логикой решения проблем, а не только с тоном. Психотип диктует **как** персонаж решает проблему: альфа берёт командование или платит, тревожный отступает в безопасность, прагматик ищет самый дешёвый выход, тролль эскалирует неловкость шуткой.
+
+## 🎬 Сюжеты и движок переменных
+
+Сюжет — это не текст, а `<plot_prompt>` с контекстом, атмосферой, драйверами сцен (`friction_sources`, `pleasant_surprise`, источники `INTERNAL_BEAT` и `AESTHETIC`) и чёрным списком слов и клише.
+
+Сюжеты второго поколения снабжены **банками переменных**: 5–7 переменных на сюжет, по 10–20 конкретных значений в каждой. Переменные подставляются в текст сюжета и связаны между собой — они не независимые случайные броски, а вложенная геометрия сцены.
+
+Пример (GLAMPING): `glamping_aesthetics` (13 вариантов жилья) × `lost_luxury` (11 вариантов того, что убило отключение света) × `weather_condition` (15) × `neighbor_attitude` (17) × `pleasant_discovery` (15) × `trip_reason` (16). Правила сюжета явно требуют выводить трение из столкновения `{weather_condition}` с тёмным `{glamping_aesthetics}`, а приятные находки — только из `{pleasant_discovery}`.
+
+**Бизнес-эффект:** одни и те же психологические критерии тестируются в совершенно разных, но логически связных обстановках. Уходят повторяющиеся паттерны и галлюцинации, резко растёт реиграбельность — можно пройти тот же сюжет с другим персонажем и получить другую историю.
+
+## 🖼 Изображения
+
+Обложки сюжетов и превью генерируются через image-пайплайн (Gemini image-модели + собственные Comfy-воркфлоу). Изначально картинка генерировалась **к каждой сцене** внутри сессии; в продакшене от этого отказались в пользу только обложек — генерация на каждую сцену ломала темп чтения и стоила несоразмерно. Переключатель `Story scene images` остался в админке.
+
+## 🛠 Стек (продакшен, 2026)
+
+* **Текстовая генерация:** фронтир-модели 2025–2026 через API. Основная — Claude (прямой Anthropic API), плюс Gemini и GPT.
+* **Генерация изображений:** Gemini image-модели + собственные Comfy-воркфлоу.
+* **Вспомогательные задачи:** дешёвые модели через OpenRouter на бинарные проверки (например, «самодостаточен ли ответ в ленте»).
+* **Архитектура промтов:** строгий XML-тегинг, мультиагентная логика, самопроверки модели перед выводом.
+* **Данные:** структурированный JSON-маппинг, динамическая подстановка переменных.
+
+## 📊 Объём работы
+
+| | |
+|---|---|
+| Сюжетов написано | 30+ |
+| Из них с движком переменных | 16 (94 переменные, 1160+ значений) |
+| Психотипов персонажей | 40 |
+| Карточек персонажей в базе | 53 |
+| Типов сцен | 5 с квотами ротации |
+| Механик открытия сцены | 10 с запретом повтора |
